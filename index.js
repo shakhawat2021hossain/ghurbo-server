@@ -30,12 +30,18 @@ const client = new MongoClient(uri, {
 
 client.connect((err) => {
   const collection = client.db("travel").collection("offers");
+  const orderCollection = client.db("travel").collection("orders");
 
   //get api (all data)
   app.get("/offers", async (req, res) => {
     const cursor = collection.find({});
     const offers = await cursor.toArray();
     res.send(offers);
+  });
+  app.get("/orders/:email", async (req, res) => {
+    const cursor = orderCollection.find({ email: req.params.email });
+    const orders = await cursor.toArray();
+    res.send(orders);
   });
 
   //snigle offer
@@ -54,6 +60,22 @@ client.connect((err) => {
     const offer = req.body;
     const result = await collection.insertOne(offer);
     // console.log(result);
+    res.json(result);
+  });
+  app.post("/addOrder", async (req, res) => {
+    // console.log("hit the api", req.body);
+    // res.send("servicessssssssss");
+    const order = req.body;
+    const result = await orderCollection.insertOne(order);
+    // console.log(result);
+    res.json(result);
+  });
+
+  //delete api
+  app.delete("/orders/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await orderCollection.deleteOne(query);
     res.json(result);
   });
 });
