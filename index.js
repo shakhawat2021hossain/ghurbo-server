@@ -38,6 +38,11 @@ client.connect((err) => {
     const offers = await cursor.toArray();
     res.send(offers);
   });
+  app.get("/allOrders", async (req, res) => {
+    const cursor = orderCollection.find({});
+    const allOrders = await cursor.toArray();
+    res.send(allOrders);
+  });
   app.get("/orders/:email", async (req, res) => {
     const cursor = orderCollection.find({ email: req.params.email });
     const orders = await cursor.toArray();
